@@ -1,11 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
     const formulario = document.getElementById("formulario");
     const mensajeError = document.getElementById("mensajeError");
- 
 
     formulario.addEventListener("submit", function(event) {
         event.preventDefault();
- 
 
         // Obtener los valores de los campos
         const id = formulario.id.value;
@@ -15,53 +13,59 @@ document.addEventListener("DOMContentLoaded", function() {
         const correo = formulario.correo.value;
         const edad = formulario.edad.value;
         const fechaNacimiento = formulario.fechaNacimiento.value;
- 
+
+        // Almacena los errores en un objeto donde la clave es el nombre del campo y el valor es el error
+        const errores = {};
 
         // Validar ID (5 dígitos exactos)
         if (!/^\d{5}$/.test(id)) {
-            mensajeError.textContent = "El ID debe tener 5 dígitos exactos.";
-            return;
+            errores.id = "El ID debe tener 5 dígitos exactos.";
         }
- 
 
         // Validar nombre y apellidos (no pueden estar vacíos)
-        if (nombre.trim() === "" || apellidos.trim() === "") {
-            mensajeError.textContent = "El nombre y los apellidos no pueden estar vacíos.";
-            return;
+        if (nombre.trim() === "") {
+            errores.nombre = "El nombre no puede estar vacío.";
         }
- 
 
         // Validar teléfono (###)###-####
         if (!/^\(\d{3}\)\d{3}-\d{4}$/.test(telefono)) {
-            mensajeError.textContent = "El teléfono debe tener el formato (###)###-####.";
-            return;
+            errores.telefono = "El teléfono debe tener el formato (###)###-####.";
         }
-
- 
 
         // Validar correo electrónico
         if (!/^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(correo)) {
-            mensajeError.textContent = "El correo electrónico no es válido.";
-            return;
+            errores.correo = "El correo electrónico no es válido.";
         }
- 
 
         // Validar edad (número positivo)
         const edadNum = parseInt(edad);
         if (isNaN(edadNum) || edadNum <= 0) {
-            mensajeError.textContent = "La edad debe ser un número positivo.";
-            return;
+            errores.edad = "La edad debe ser un número positivo.";
         }
- 
 
         // Validar fecha de nacimiento (AAAA-MM-DD)
         if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaNacimiento)) {
-            mensajeError.textContent = "La fecha de nacimiento debe tener el formato AAAA-MM-DD.";
-            return;
+            errores.fechaNacimiento = "La fecha de nacimiento debe tener el formato AAAA-MM-DD.";
         }
- 
 
-        // Si todas las validaciones pasaron, puedes enviar el formulario o realizar otras acciones aquí
-        mensajeError.textContent = "Formulario enviado con éxito.";
+        // Limpiar mensajes de error previos
+        const errorElements = document.querySelectorAll(".error");
+        errorElements.forEach(element => element.textContent = "");
+
+        // Mostrar errores debajo de cada entrada en color rojo
+        for (const campo in errores) {
+            if (errores.hasOwnProperty(campo)) {
+                const inputElement = document.getElementById(campo);
+                const errorElement = inputElement.nextElementSibling; // El siguiente elemento es el <span> para el error
+                errorElement.textContent = errores[campo];
+                errorElement.style.color = "red";
+            }
+        }
+
+        // Comprobar si hay errores generales
+        if (Object.keys(errores).length === 0) {
+            // Si no hay errores, se envía el formulario o realizas otras acciones aquí
+            mensajeError.textContent = "Formulario enviado con éxito.";
+        }
     });
 });
